@@ -1,0 +1,5 @@
+appType: smartapp_code
+name: "GardenerAssistant"
+version: 1.0.0
+runtime: nodejs18
+description: "Помощник по складыванию вещей"
