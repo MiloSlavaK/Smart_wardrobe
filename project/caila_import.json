@@ -1,0 +1,106 @@
+{
+  "project": {
+    "id": "clothing-assistant",
+    "name": "ClothingAssistant",
+    "folder": "/jaicp"
+  },
+  "settings": {
+    "language": "ru",
+    "spellingCorrection": false,
+    "classificationAlgorithm": "sts",
+    "timezone": "UTC",
+    "businessShared": false,
+    "business": false
+  },
+  "intents": [
+    {
+      "name": "folding",
+      "utterances": [
+        "как сложить {item}",
+        "как убрать {item}",
+        "инструкция для {item}",
+        "покажи как складывать {item}",
+        "как красиво сложить {item}"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "remember_location",
+      "utterances": [
+        "я положил {item} в {location}",
+        "запомни {item} в {location}",
+        "убрал {item} в {location}",
+        "теперь {item} в {location}"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "location",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "find_location",
+      "utterances": [
+        "где {item}",
+        "куда я положил {item}",
+        "найди {item}",
+        "где лежит {item}"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "washing",
+      "utterances": [
+        "как стирать {item}",
+        "режим стирки для {item}",
+        "как ухаживать за {item}",
+        "можно ли стирать {item}"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "help",
+      "utterances": [
+        "помощь",
+        "что ты умеешь",
+        "какие команды",
+        "help"
+      ],
+      "slots": []
+    }
+  ],
+  "entities": [],
+  "enabledSystemEntities": [
+    "duckling.number",
+    "duckling.time",
+    "duckling.duration",
+    "duckling.phone-number",
+    "duckling.email",
+    "duckling.url"
+  ]
+}
