@@ -1,0 +1,118 @@
+{
+  "project": {
+    "id": "clothing-organizer",
+    "name": "Помощник по складыванию одежды",
+    "folder": "/"
+  },
+  "settings": {
+    "language": "ru",
+    "spellingCorrection": false,
+    "classificationAlgorithm": "sts",
+    "timezone": "Europe/Moscow",
+    "extendedSettings": {
+      "tokenizerEngine": "default"
+    }
+  },
+  "intents": [
+    {
+      "name": "add_clothing",
+      "utterances": [
+        "добавить {item}",
+        "положить {item}",
+        "новая вещь {item}",
+        "записать {item}",
+        "добавить {item} в категорию {category}"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "entity": "clothing_item",
+          "required": true
+        },
+        {
+          "name": "category",
+          "entity": "clothing_category",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "done_clothing",
+      "utterances": [
+        "сложил {item}",
+        "убрал {item}",
+        "готово",
+        "выполнил",
+        "я всё сложил"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "entity": "clothing_item",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "delete_clothing",
+      "utterances": [
+        "удалить {item}",
+        "убрать {item}",
+        "не нужно {item}"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "entity": "clothing_item",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "greeting",
+      "utterances": [
+        "привет",
+        "здравствуй",
+        "начни"
+      ],
+      "slots": []
+    }
+  ],
+  "entities": [
+    {
+      "name": "clothing_item",
+      "type": "custom",
+      "values": [
+        {"value": "футболка", "synonyms": ["футболочка"]},
+        {"value": "рубашка", "synonyms": ["сорочка", "блузка"]},
+        {"value": "свитер", "synonyms": ["пуловер", "джемпер", "кофта"]},
+        {"value": "джинсы", "synonyms": ["jeans"]},
+        {"value": "брюки", "synonyms": ["штаны"]},
+        {"value": "шорты", "synonyms": []},
+        {"value": "носки", "synonyms": ["носочки"]},
+        {"value": "нижнее бельё", "synonyms": ["бельё", "трусы"]},
+        {"value": "платье", "synonyms": ["платьице"]},
+        {"value": "юбка", "synonyms": []}
+      ]
+    },
+    {
+      "name": "clothing_category",
+      "type": "custom",
+      "values": [
+        {"value": "верх", "synonyms": ["верхняя"]},
+        {"value": "низ", "synonyms": ["нижняя"]},
+        {"value": "нижнее", "synonyms": ["бельё"]},
+        {"value": "носки", "synonyms": []},
+        {"value": "другое", "synonyms": ["прочее"]}
+      ]
+    }
+  ],
+  "enabledSystemEntities": [
+    "duckling.number",
+    "duckling.time",
+    "duckling.duration",
+    "duckling.phone-number",
+    "duckling.email",
+    "duckling.url"
+  ]
+}
