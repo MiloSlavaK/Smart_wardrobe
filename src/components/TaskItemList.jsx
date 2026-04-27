@@ -2,42 +2,41 @@ import React from 'react';
 import './TaskItemList.css';
 
 export const TaskItemList = (props) => {
-  const { items, onDone, onDelete } = props;
+  const { items, onDelete, onUpdateReminder, onCare } = props;
 
-  const getCategoryIcon = (category) => {
-    const icons = { 'верх': '👕', 'низ': '👖', 'нижнее': '🩲', 'носки': '🧦', 'другое': '👔' };
-    return icons[category] || '👔';
-  };
-
-  const getCategoryName = (category) => {
-    const names = { 'верх': 'Верх', 'низ': 'Низ', 'нижнее': 'Нижнее бельё', 'носки': 'Носки', 'другое': 'Другое' };
-    return names[category] || category;
+  const isDue = (dateStr) => {
+    if (!dateStr) return false;
+    return new Date(dateStr) <= new Date();
   };
 
   return (
     <div className="task-item-list">
-      {items.length === 0 ? (
-        <div className="empty-state"><p>📦 Добавьте первую вещь для складывания</p></div>
-      ) : (
-        items.map((item) => (
-          <div key={item.id} className={`task-item ${item.completed ? 'completed' : ''}`}>
-            <div className="task-item-header">
-              <span className="task-item-icon">{getCategoryIcon(item.category)}</span>
-              <div className="task-item-info">
-                <h3 className="task-item-name">{item.name}</h3>
-                <span className="task-item-category">{getCategoryName(item.category)}</span>
-              </div>
+      {items.map((item) => {
+        const due = isDue(item.nextReminder);
+        return (
+          <div key={item.id} className={`task-item ${due ? 'alert' : ''}`}>
+            <div className="task-header">
+              <h3>{item.name}</h3>
+              {due && <span className="badge-alert">⚠️ Время ухода!</span>}
             </div>
-            <div className="task-item-instruction"><p>{item.instruction}</p></div>
-            <div className="task-item-actions">
-              <button className={`task-item-button ${item.completed ? 'completed' : ''}`} onClick={() => onDone(item)}>
-                {item.completed ? '✓ Сложено' : 'Отметить как сложенное'}
-              </button>
-              <button className="task-item-delete" onClick={() => onDelete(item)}>🗑️</button>
+
+            <div className="task-info">
+              <p><strong>🧼 Стирка:</strong> {item.washing}</p>
+              <p><strong>📐 Складка:</strong> {item.instruction}</p>
+            </div>
+
+            <div className="task-actions">
+              {item.nextReminder && (
+                <span className="reminder-date">
+                  📅 {item.nextReminder}
+                </span>
+              )}
+              <button className="btn-care" onClick={() => onCare(item.id)}>🗣 Озвучить совет</button>
+              <button className="btn-delete" onClick={() => onDelete(item.id)}>🗑</button>
             </div>
           </div>
-        ))
-      )}
+        );
+      })}
     </div>
   );
 };

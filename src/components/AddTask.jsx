@@ -4,74 +4,55 @@ import "../App.css";
 export class AddTask extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: '',
-      category: 'верх',
-      instruction: '',
-      showAdvanced: false,
-    };
+    this.state = { name: '', category: 'верх', nextReminder: '' };
   }
 
   render() {
     const { onAdd } = this.props;
-    const { name, category, instruction, showAdvanced } = this.state;
+    const { name, category, nextReminder } = this.state;
 
     return (
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (name.trim()) {
-            onAdd(name.trim(), category, instruction.trim());
-            this.setState({ name: '', category: 'верх', instruction: '', showAdvanced: false });
-          }
-        }}
-      >
-        <div className="add-task-container">
+      <div className="add-task-container">
+        <h3>🧥 Новая вещь</h3>
+        <input
+          className="add-task-input"
+          placeholder="Название (напр. Шерстяной свитер)"
+          value={name}
+          onChange={(e) => this.setState({ name: e.target.value })}
+        />
+
+        <select
+          className="add-task-select"
+          value={category}
+          onChange={(e) => this.setState({ category: e.target.value })}
+        >
+          <option value="верх">👕 Верх (Футболки/Рубашки)</option>
+          <option value="низ">👖 Низ (Брюки/Джинсы)</option>
+          <option value="шерсть">🧶 Шерсть (Свитера/Пальто)</option>
+        </select>
+
+        <label className="date-label">
+          📅 Напомнить об уходе через:
           <input
-            className="add-task-input"
-            type="text"
-            placeholder="Название вещи (например: Футболка)"
-            value={name}
-            onChange={({ target: { value } }) => this.setState({ name: value })}
-            required
-            autoFocus
+            type="date"
+            className="date-input"
+            value={nextReminder}
+            onChange={(e) => this.setState({ nextReminder: e.target.value })}
           />
+        </label>
 
-          <select
-            className="add-task-select"
-            value={category}
-            onChange={({ target: { value } }) => this.setState({ category: value })}
-          >
-            <option value="верх">Верх (футболки, рубашки)</option>
-            <option value="низ">Низ (брюки, джинсы)</option>
-            <option value="нижнее">Нижнее бельё</option>
-            <option value="носки">Носки</option>
-            <option value="другое">Другое</option>
-          </select>
-
-          <button
-            type="button"
-            className="toggle-advanced"
-            onClick={() => this.setState({ showAdvanced: !showAdvanced })}
-          >
-            {showAdvanced ? 'Скрыть инструкцию' : 'Добавить инструкцию'}
-          </button>
-
-          {showAdvanced && (
-            <textarea
-              className="add-task-textarea"
-              placeholder="Инструкция по складыванию (необязательно)"
-              value={instruction}
-              onChange={({ target: { value } }) => this.setState({ instruction: value })}
-              rows="3"
-            />
-          )}
-
-          <button type="submit" className="add-task-button">
-            Добавить вещь
-          </button>
-        </div>
-      </form>
+        <button
+          className="add-task-button"
+          onClick={() => {
+            if (name) {
+              onAdd({ name, category, nextReminder });
+              this.setState({ name: '', nextReminder: '' });
+            }
+          }}
+        >
+          Добавить в гардероб
+        </button>
+      </div>
     );
   }
 }
