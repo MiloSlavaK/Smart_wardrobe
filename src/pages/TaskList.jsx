@@ -3,8 +3,8 @@ import { AddTask } from '../components/AddTask';
 import { TaskItemList } from '../components/TaskItemList';
 
 export const TaskList = (props) => {
-  const { items, onAdd, onDone, onDelete } = props;
-
+  const { items, onAdd, onDone, onDelete, onUpdateReminder } = props;
+  
   return (
     <main className="container">
       <header className="header">
@@ -16,7 +16,12 @@ export const TaskList = (props) => {
 
       <section className="task-section">
         <h2>Ваши вещи</h2>
-        <TaskItemList items={items} onDone={onDone} onDelete={onDelete} />
+        <TaskItemList 
+          items={items} 
+          onDone={onDone} 
+          onDelete={onDelete} 
+          onUpdateReminder={onUpdateReminder}
+        />
       </section>
     </main>
   );

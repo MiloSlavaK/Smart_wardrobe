@@ -5,7 +5,6 @@ import { TaskList } from './pages/TaskList';
 
 // Безопасная инициализация ассистента
 const initializeAssistant = (getState) => {
-  // Проверяем, запущены ли мы в режиме разработки И есть ли необходимые переменные
   const isDev = process.env.NODE_ENV === 'development';
   const hasToken = process.env.REACT_APP_TOKEN;
   const hasSmartApp = process.env.REACT_APP_SMARTAPP;
@@ -24,12 +23,10 @@ const initializeAssistant = (getState) => {
       });
     } catch (e) {
       console.warn('SmartApp Debugger init failed:', e);
-      // Fallback к обычному ассистенту при ошибке
       return createAssistant({ getState });
     }
   }
 
-  // В продакшене или если нет переменных — используем обычный ассистент
   return createAssistant({ getState });
 };
 
@@ -37,7 +34,6 @@ export class App extends React.Component {
   constructor(props) {
     super(props);
 
-    // Начальные данные с инструкциями по умолчанию
     this.state = {
       items: [
         {
@@ -45,14 +41,13 @@ export class App extends React.Component {
           name: 'Футболка',
           category: 'верх',
           instruction: 'Сложите пополам вдоль, затем ещё раз пополам',
-          washing: '30°C, деликатный режим',
+          washing: '30°C, деликатный режим. Сушить в расправленном виде.',
           nextReminder: '',
           completed: false
         }
       ],
     };
 
-    // Инициализируем ассистента с обработкой ошибок
     try {
       this.assistant = initializeAssistant(() => this.getStateForAssistant());
 
@@ -66,7 +61,6 @@ export class App extends React.Component {
       });
     } catch (error) {
       console.error('Failed to initialize assistant:', error);
-      // Создаём заглушку, чтобы приложение не падало
       this.assistant = {
         on: () => {},
         sendData: () => () => {},
@@ -194,14 +188,14 @@ export class App extends React.Component {
     return (
       <TaskList
         items={this.state.items}
-        onAdd={(name, category, instruction, washing, nextReminder) => {
+        onAdd={(item) => {
           this.addClothing({
             type: 'add_clothing',
-            name,
-            category,
-            instruction,
-            washing,
-            nextReminder
+            name: item.name,
+            category: item.category,
+            instruction: item.instruction,
+            washing: item.washing,
+            nextReminder: item.nextReminder
           });
         }}
         onDone={(item) => {

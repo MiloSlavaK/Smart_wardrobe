@@ -1,20 +1,46 @@
-# Зависимости
+```gitignore
+# Dependencies
 node_modules/
 
-# PyCharm IDE
+# Build artifacts
+dist/
+build/
+*.js
+*.css
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
 .idea/
-*.iml
 
-# Логи
+# Logs
 *.log
-npm-debug.log*
 
-# Файлы ОС
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# Виртуальное окружение Python (если есть)
-venv/
-env/
-__pycache__/
-*.pyc
+# Coverage reports
+coverage/
+htmlcov/
+*.coverage
+
+# Local configuration
+.env*
+!.env.example
+```
