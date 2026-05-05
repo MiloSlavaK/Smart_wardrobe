@@ -1,110 +1,97 @@
-import React from "react";
-import "../App.css";
+import React, { useState } from 'react';
+import '../App.css';
+import { CATEGORY_OPTIONS } from '../constants/clothingData';
 
-export class AddTask extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { 
-      name: '', 
-      category: 'верх', 
-      instruction: '', 
-      washing: '',
-      nextReminder: '',
-      showAdvanced: false
-    };
-  }
+export const AddTask = ({ onAdd }) => {
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState(CATEGORY_OPTIONS[0].value);
+  const [instruction, setInstruction] = useState('');
+  const [washing, setWashing] = useState('');
+  const [nextReminder, setNextReminder] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
-  handleAdd = () => {
-    const { name, category, instruction, washing, nextReminder } = this.state;
+  const handleAdd = () => {
     if (name) {
-      this.props.onAdd({ 
+      onAdd({ 
         name, 
         category, 
         instruction: instruction || undefined, 
         washing: washing || undefined,
         nextReminder 
       });
-      this.setState({ 
-        name: '', 
-        instruction: '', 
-        washing: '',
-        nextReminder: '',
-        showAdvanced: false
-      });
+      setName('');
+      setInstruction('');
+      setWashing('');
+      setNextReminder('');
+      setShowAdvanced(false);
     }
-  }
+  };
 
-  render() {
-    const { onAdd } = this.props;
-    const { name, category, instruction, washing, nextReminder, showAdvanced } = this.state;
+  return (
+    <div className="add-task-container">
+      <h3>🧥 Добавить новую вещь</h3>
+      <input
+        className="add-task-input"
+        placeholder="Название (напр. Шерстяной свитер)"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
+      />
 
-    return (
-      <div className="add-task-container">
-        <h3>🧥 Добавить новую вещь</h3>
-        <input
-          className="add-task-input"
-          placeholder="Название (напр. Шерстяной свитер)"
-          value={name}
-          onChange={(e) => this.setState({ name: e.target.value })}
-          onKeyPress={(e) => e.key === 'Enter' && this.handleAdd()}
-        />
+      <select
+        className="add-task-select"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      >
+        {CATEGORY_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
 
-        <select
-          className="add-task-select"
-          value={category}
-          onChange={(e) => this.setState({ category: e.target.value })}
-        >
-          <option value="верх">👕 Верх (Футболки/Рубашки)</option>
-          <option value="низ">👖 Низ (Брюки/Джинсы)</option>
-          <option value="нижнее">🩲 Нижнее бельё</option>
-          <option value="носки">🧦 Носки</option>
-          <option value="шерсть">🧶 Шерсть (Свитера/Пальто)</option>
-          <option value="другое">📦 Другое</option>
-        </select>
+      <button
+        className="toggle-advanced"
+        onClick={() => setShowAdvanced(!showAdvanced)}
+      >
+        {showAdvanced ? '▲ Скрыть настройки' : '▼ Дополнительные настройки'}
+      </button>
 
-        <button
-          className="toggle-advanced"
-          onClick={() => this.setState({ showAdvanced: !showAdvanced })}
-        >
-          {showAdvanced ? '▲ Скрыть настройки' : '▼ Дополнительные настройки'}
-        </button>
-
-        {showAdvanced && (
-          <div className="advanced-settings">
-            <textarea
-              className="add-task-textarea"
-              placeholder="Инструкция по складыванию (оставьте пустым для авто-совета)"
-              value={instruction}
-              onChange={(e) => this.setState({ instruction: e.target.value })}
-              rows="3"
-            />
-            <textarea
-              className="add-task-textarea"
-              placeholder="Совет по стирке (оставьте пустым для авто-совета)"
-              value={washing}
-              onChange={(e) => this.setState({ washing: e.target.value })}
-              rows="2"
-            />
-          </div>
-        )}
-
-        <label className="date-label">
-          📅 Напомнить об уходе:
-          <input
-            type="date"
-            className="date-input"
-            value={nextReminder}
-            onChange={(e) => this.setState({ nextReminder: e.target.value })}
+      {showAdvanced && (
+        <div className="advanced-settings">
+          <textarea
+            className="add-task-textarea"
+            placeholder="Инструкция по складыванию (оставьте пустым для авто-совета)"
+            value={instruction}
+            onChange={(e) => setInstruction(e.target.value)}
+            rows="3"
           />
-        </label>
+          <textarea
+            className="add-task-textarea"
+            placeholder="Совет по стирке (оставьте пустым для авто-совета)"
+            value={washing}
+            onChange={(e) => setWashing(e.target.value)}
+            rows="2"
+          />
+        </div>
+      )}
 
-        <button
-          className="add-task-button"
-          onClick={this.handleAdd}
-        >
-          ✨ Добавить в гардероб
-        </button>
-      </div>
-    );
-  }
-}
+      <label className="date-label">
+        📅 Напомнить об уходе:
+        <input
+          type="date"
+          className="date-input"
+          value={nextReminder}
+          onChange={(e) => setNextReminder(e.target.value)}
+        />
+      </label>
+
+      <button
+        className="add-task-button"
+        onClick={handleAdd}
+      >
+        ✨ Добавить в гардероб
+      </button>
+    </div>
+  );
+};

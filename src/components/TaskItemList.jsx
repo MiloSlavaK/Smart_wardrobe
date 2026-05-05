@@ -1,32 +1,10 @@
 import React from 'react';
 import './TaskItemList.css';
+import { isDue } from '../utils/helpers';
+import { useSpeech } from '../hooks/useSpeech';
 
-export const TaskItemList = (props) => {
-  const { items, onDone, onDelete, onUpdateReminder, onCare } = props;
-  
-  const isDue = (dateStr) => {
-    if (!dateStr) return false;
-    return new Date(dateStr) <= new Date();
-  };
-
-  const speakText = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'ru-RU';
-      utterance.rate = 0.9;
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const handleSpeakInstruction = (item) => {
-    const text = `Как сложить ${item.name}: ${item.instruction}`;
-    speakText(text);
-  };
-
-  const handleSpeakWashing = (item) => {
-    const text = `Совет по стирке для ${item.name}: ${item.washing}`;
-    speakText(text);
-  };
+export const TaskItemList = ({ items, onDone, onDelete, onUpdateReminder, onCare }) => {
+  const { handleSpeakInstruction, handleSpeakWashing } = useSpeech();
 
   return (
     <div className="task-item-list">
