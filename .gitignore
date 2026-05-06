@@ -1,20 +1,4 @@
-# Зависимости
-node_modules/
-
-# PyCharm IDE
-.idea/
-*.iml
-
-# Логи
-*.log
-npm-debug.log*
-
-# Файлы ОС
-.DS_Store
-Thumbs.db
-
-# Виртуальное окружение Python (если есть)
-venv/
-env/
-__pycache__/
-*.pyc
+```css
+/* No build artifacts, dependencies, or temp files detected in changes */
+/* Only CSS source files were modified, so no ignores are needed */
+```
