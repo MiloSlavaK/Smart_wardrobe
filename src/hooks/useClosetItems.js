@@ -1,9 +1,42 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { generateId, getDefaultInstruction, getDefaultWashing } from '../utils/helpers';
 
-export const useClosetItems = (initialItems = []) => {
-  const [items, setItems] = useState(initialItems);
+const STORAGE_KEY = 'closet_items_db';
 
+// Загрузка данных из localStorage
+const loadFromStorage = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Ошибка при загрузке данных из localStorage:', error);
+  }
+  return [];
+};
+
+// Сохранение данных в localStorage
+const saveToStorage = (items) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch (error) {
+    console.error('Ошибка при сохранении данных в localStorage:', error);
+  }
+};
+
+export const useClosetItems = (initialItems = []) => {
+  // Инициализируем состояние с данными из localStorage или initialItems
+  const [items, setItems] = useState(() => {
+    const stored = loadFromStorage();
+    return stored.length > 0 ? stored : initialItems;
+  });
+  
+  // Сохраняем данные в localStorage при каждом изменении items
+  useEffect(() => {
+    saveToStorage(items);
+  }, [items]);
+  
   const addItem = useCallback((item) => {
     const { name, category, instruction, washing, nextReminder } = item;
     const newItem = {
@@ -17,7 +50,7 @@ export const useClosetItems = (initialItems = []) => {
     };
     setItems((prev) => [...prev, newItem]);
   }, []);
-
+  
   const toggleItemCompleted = useCallback((id) => {
     setItems((prev) =>
       prev.map((item) =>
@@ -25,11 +58,11 @@ export const useClosetItems = (initialItems = []) => {
       )
     );
   }, []);
-
+  
   const deleteItem = useCallback((id) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
-
+  
   const updateReminder = useCallback((id, date) => {
     setItems((prev) =>
       prev.map((item) =>
@@ -37,12 +70,19 @@ export const useClosetItems = (initialItems = []) => {
       )
     );
   }, []);
-
+  
+  // Функция для очистки всей базы данных
+  const clearDatabase = useCallback(() => {
+    setItems([]);
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
+  
   return {
     items,
     addItem,
     toggleItemCompleted,
     deleteItem,
     updateReminder,
+    clearDatabase,
   };
 };
