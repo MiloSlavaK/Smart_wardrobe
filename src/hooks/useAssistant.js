@@ -33,11 +33,16 @@ export const useAssistant = (onAction, context) => {
   const assistantRef = useRef(null);
   const getStateCallback = useRef(() => ({}));
   const contextRef = useRef(context);
+  const onActionRef = useRef(onAction);
 
-  // Обновляем контекст при изменении
+  // Обновляем контекст и обработчик действий при изменении
   useEffect(() => {
     contextRef.current = context;
   }, [context]);
+
+  useEffect(() => {
+    onActionRef.current = onAction;
+  }, [onAction]);
 
   useEffect(() => {
     try {
@@ -48,15 +53,15 @@ export const useAssistant = (onAction, context) => {
           console.log(`character: "${event?.character?.id}"`);
         } else {
           const { action } = event;
-          if (action && onAction) {
-            // Обрабатываем действие через smartAppHandler
+          if (action && onActionRef.current) {
+            // Обрабатываем действие через smartAppHandler с актуальным контекстом
             const result = handleSmartAppAction(action, contextRef.current);
             
             // Логгируем результат
             console.log('SmartApp action result:', result);
             
             // Вызываем оригинальный обработчик для обновления UI
-            onAction(action);
+            onActionRef.current(action);
             
             // Если есть голосовой ответ, озвучиваем его
             if (result?.speak && 'speechSynthesis' in window) {
@@ -82,7 +87,7 @@ export const useAssistant = (onAction, context) => {
         assistantRef.current = null;
       }
     };
-  }, [onAction]);
+  }, []); // Пустой массив - инициализируем только один раз
 
   const updateState = useCallback((stateGetter) => {
     getStateCallback.current = stateGetter;
