@@ -1,4 +1,19 @@
-```css
-/* No build artifacts, dependencies, or temp files detected in changes */
-/* Only CSS source files were modified, so no ignores are needed */
+```
+# Dependencies
+node_modules/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+*.env.*
 ```
