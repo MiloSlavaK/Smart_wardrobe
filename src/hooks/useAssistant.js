@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 import { ASSISTANT_IGNORED_WORDS } from '../constants/clothingData';
+import { handleSmartAppAction, createSmartAppResponse } from '../utils/smartAppHandler';
 
 const initializeAssistant = (getState) => {
   const isDev = process.env.NODE_ENV === 'development';
@@ -28,9 +29,15 @@ const initializeAssistant = (getState) => {
   return createAssistant({ getState });
 };
 
-export const useAssistant = (onAction) => {
+export const useAssistant = (onAction, context) => {
   const assistantRef = useRef(null);
   const getStateCallback = useRef(() => ({}));
+  const contextRef = useRef(context);
+
+  // Обновляем контекст при изменении
+  useEffect(() => {
+    contextRef.current = context;
+  }, [context]);
 
   useEffect(() => {
     try {
@@ -42,7 +49,22 @@ export const useAssistant = (onAction) => {
         } else {
           const { action } = event;
           if (action && onAction) {
+            // Обрабатываем действие через smartAppHandler
+            const result = handleSmartAppAction(action, contextRef.current);
+            
+            // Логгируем результат
+            console.log('SmartApp action result:', result);
+            
+            // Вызываем оригинальный обработчик для обновления UI
             onAction(action);
+            
+            // Если есть голосовой ответ, озвучиваем его
+            if (result?.speak && 'speechSynthesis' in window) {
+              const utterance = new SpeechSynthesisUtterance(result.speak);
+              utterance.lang = 'ru-RU';
+              utterance.rate = 0.9;
+              window.speechSynthesis.speak(utterance);
+            }
           }
         }
       });
@@ -78,10 +100,29 @@ export const useAssistant = (onAction) => {
     });
   }, []);
 
+  const sendSmartAppResponse = useCallback((response) => {
+    if (!assistantRef.current?.sendData) return;
+
+    const formattedResponse = createSmartAppResponse(response);
+    
+    const data = {
+      action: { 
+        action_id: 'response', 
+        parameters: formattedResponse 
+      },
+    };
+    
+    const unsubscribe = assistantRef.current.sendData(data, (data) => {
+      console.log('SmartApp response sent:', data);
+      unsubscribe?.();
+    });
+  }, []);
+
   return {
     assistant: assistantRef.current,
     updateState,
     sendActionValue,
+    sendSmartAppResponse,
   };
 };
 
