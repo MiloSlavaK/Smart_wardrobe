@@ -18,32 +18,41 @@ const DEMO_ITEM = {
 export const App = () => {
   const { items, addItem, toggleItemCompleted, deleteItem, updateReminder } = useClosetItems([DEMO_ITEM]);
 
+  // Контекст для обработчика SmartApp
+  const smartAppContext = {
+    items,
+    addItem,
+    toggleItemCompleted,
+    deleteItem,
+    updateReminder,
+  };
+
   const handleAssistantAction = (action) => {
-    switch (action.type) {
+    switch (action.type || action.action_id) {
       case 'add_clothing':
         addItem({
-          name: action.name,
-          category: action.category,
+          name: action.name || action.parameters?.name,
+          category: action.category || action.parameters?.category,
           instruction: action.instruction,
           washing: action.washing,
           nextReminder: action.nextReminder,
         });
         break;
       case 'done_clothing':
-        toggleItemCompleted(action.id);
+        toggleItemCompleted(action.id || action.parameters?.id);
         break;
       case 'delete_clothing':
-        deleteItem(action.id);
+        deleteItem(action.id || action.parameters?.id);
         break;
       case 'set_reminder':
-        updateReminder(action.id, action.date);
+        updateReminder(action.id || action.parameters?.id, action.date || action.parameters?.date);
         break;
       default:
-        console.log('Unknown action type:', action.type);
+        console.log('Unknown action type:', action.type || action.action_id);
     }
   };
 
-  const { assistant, updateState, sendActionValue } = useAssistant(handleAssistantAction);
+  const { assistant, updateState, sendActionValue, sendSmartAppResponse } = useAssistant(handleAssistantAction, smartAppContext);
 
   const { playSuccessMessage } = useSuccessMessage(sendActionValue);
 

@@ -1,1 +1,19 @@
-Nothing should be ignored based on the provided file changes. The added and modified files (DEPLOYMENT.md, sberbot.json, README.md) are all source/config files, and the deleted file (yarn.lock) doesn't need to be in .gitignore since it's already being tracked. There are no build artifacts, dependencies, or temporary files in the change list that would warrant adding ignore rules.
+```
+# Dependencies
+node_modules/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+*.env.*
+```
