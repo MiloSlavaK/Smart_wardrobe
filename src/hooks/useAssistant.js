@@ -5,12 +5,56 @@ import { ASSISTANT_IGNORED_WORDS } from '../constants/clothingData';
 import { handleSmartAppAction, createSmartAppResponse } from '../utils/smartAppHandler';
 
 /**
+ * 🔹 Mock-ассистент для безопасной работы без AssistantHost
+ * Возвращает заглушку с теми же методами, что и реальный клиент
+ */
+const createMockAssistant = () => {
+  const mock = {
+    on: (event, cb) => {
+      if (event === 'start') {
+        // Эмулируем готовность с небольшой задержкой
+        setTimeout(() => cb?.(), 100);
+      }
+      return () => {}; // unsubscribe
+    },
+    sendData: (data, onResponse) => {
+      console.log('📤 [MOCK] sendData:', data);
+      // Эмулируем успешный ответ
+      onResponse?.({ type: 'mock_response', payload: { status: 'ok' } });
+      return () => {};
+    },
+    sendAction: (action, onSuccess, onError) => {
+      console.log('📤 [MOCK] sendAction:', action);
+      onSuccess?.({ payload: { status: 'ok' } });
+      return () => {};
+    },
+    getInitialData: () => [],
+    getRecoveryState: () => null,
+    setGetState: () => {},
+    setGetRecoveryState: () => {},
+    cancelTts: () => {
+      console.log('🔇 [MOCK] cancelTts called');
+    },
+    close: () => {},
+    subscribeToCommand: () => () => {},
+  };
+  return mock;
+};
+
+/**
  * Инициализация ассистента: дебаггер для dev, обычный клиент для prod
  */
 const initializeAssistant = (getState, getRecoveryState) => {
   const isDev = process.env.NODE_ENV === 'development';
-  const hasToken = process.env.REACT_APP_TOKEN;
-  const hasSmartApp = process.env.REACT_APP_SMARTAPP;
+  const hasToken = process.env.REACT_APP_TOKEN?.trim();
+  const hasSmartApp = process.env.REACT_APP_SMARTAPP?.trim();
+
+  // 🔥 В dev-режиме без токена — возвращаем mock, а не крашим приложение
+  if (isDev && (!hasToken || !hasSmartApp)) {
+    console.warn('⚠️ Assistant Client: missing REACT_APP_TOKEN or REACT_APP_SMARTAPP');
+    console.warn('📋 Получите токен: SmartApp Studio → Настройки профиля → SmartApp → Эмулятор');
+    return createMockAssistant();
+  }
 
   if (isDev && hasToken && hasSmartApp) {
     try {
@@ -18,20 +62,22 @@ const initializeAssistant = (getState, getRecoveryState) => {
         token: process.env.REACT_APP_TOKEN,
         initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
         getState,
-        getRecoveryState, // 🔥 Добавлено: восстановление состояния
+        getRecoveryState,
         nativePanel: {
           defaultText: 'Добавьте вещь...',
           screenshotMode: false,
           tabIndex: -1,
         },
-        // 🔥 Название поверхности для корректного отображения
         surface: process.env.REACT_APP_SURFACE || 'COMPANION',
       });
     } catch (e) {
-      console.warn('⚠️ SmartApp Debugger init failed, falling back to createAssistant:', e);
+      console.error('❌ SmartApp Debugger init failed:', e.message);
+      // 🔹 Fallback на mock при любой ошибке инициализации
+      return createMockAssistant();
     }
   }
 
+  // Production: используем createAssistant (работает только в среде Сбера)
   return createAssistant({ getState, getRecoveryState });
 };
 
@@ -41,6 +87,7 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
   const contextRef = useRef(context);
   const onActionRef = useRef(onAction);
   const recoveryStateRef = useRef(recoveryStateGetter);
+  const isInitializedRef = useRef(false);
 
   // Синхронизируем рефы с актуальными значениями
   useEffect(() => { contextRef.current = context; }, [context]);
@@ -48,7 +95,11 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
   useEffect(() => { recoveryStateRef.current = recoveryStateGetter; }, [recoveryStateGetter]);
 
   useEffect(() => {
-    // 🔥 Инициализируем ассистент с актуальными функциями getState/getRecoveryState
+    // 🔥 Защита от повторной инициализации
+    if (isInitializedRef.current) return;
+    isInitializedRef.current = true;
+
+    // Инициализируем ассистент
     assistantRef.current = initializeAssistant(
       () => getStateCallback.current(),
       () => recoveryStateRef.current?.() || null
@@ -59,14 +110,19 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
       return;
     }
 
-    // 🔥 Получаем и обрабатываем начальные данные (чтобы избежать дублирования)
+    // 🔥 Подписка на событие готовности
+    assistantRef.current.on?.('start', () => {
+      console.log('✅ Assistant ready');
+    });
+
+    // 🔥 Получаем и обрабатываем начальные данные (чтобы избежать дублирования в on('data'))
     try {
       const initialData = assistantRef.current.getInitialData?.();
       if (initialData?.length) {
         initialData.forEach((cmd) => {
           if (cmd.type === 'smart_app_data' && cmd.smart_app_data?.action) {
             console.log('📥 Processing initial command:', cmd.smart_app_data.action);
-            handleInitialCommand(cmd.smart_app_data.action, contextRef.current);
+            onActionRef.current?.(cmd.smart_app_data.action);
           }
         });
       }
@@ -83,17 +139,19 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
           return;
         }
 
-        // 🔹 Тема (светлая/тёмная) — можно применить к UI
+        // 🔹 Тема (светлая/тёмная) — применяем к UI
         if (event.type === 'theme') {
-          console.log(`🎨 Theme: "${event?.theme?.name}"`);
-          document.documentElement.setAttribute('data-theme', event?.theme?.name || 'dark');
+          const themeName = event?.theme?.name || 'dark';
+          console.log(`🎨 Theme: "${themeName}"`);
+          document.documentElement.setAttribute('data-theme', themeName);
           return;
         }
 
         // 🔹 Видимость приложения — останавливаем озвучку при сворачивании
         if (event.type === 'visibility') {
-          if (event.visibility === 'hidden' && 'speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
+          if (event.visibility === 'hidden') {
+            // 🔥 Критически важно: останавливаем озвучку через ассистента, НЕ через браузер
+            assistantRef.current?.cancelTts?.();
           }
           console.log(`👁️ Visibility: "${event.visibility}"`);
           return;
@@ -116,23 +174,28 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
           // Обновляем UI через основной обработчик
           onActionRef.current?.(action);
 
-          // 🔊 Озвучиваем ответ, если есть
-          if (result?.speak && 'speechSynthesis' in window) {
-            // Отменяем предыдущую озвучку
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(result.speak);
-            utterance.lang = 'ru-RU';
-            utterance.rate = 0.9;
-            utterance.pitch = 1.0;
-            window.speechSynthesis.speak(utterance);
+          // 🔊 🔥 ВАЖНО: Озвучка ТОЛЬКО через ассистента Сбера, НЕ через браузер!
+          // Браузерный speechSynthesis используется ТОЛЬКО для отладки в console.log
+          if (result?.speak) {
+            console.log('🗣️ [Assistant TTS]:', result.speak);
+            // Отправляем текст на озвучивание через платформу Сбера
+            assistantRef.current?.sendData?.({
+              action: {
+                action_id: 'pronounce_text',
+                parameters: {
+                  text: result.speak,
+                  emotion: result.emotion,
+                  context: result.context,
+                },
+              },
+            });
+            // ❌ НЕ использовать window.speechSynthesis.speak() в production!
           }
         }
 
         // 🔹 Обработка ошибок от бэкенда
         if (event.type === 'smart_app_error') {
           console.error('❌ SmartApp error:', event.smart_app_error);
-          // Можно показать тост пользователю
         }
 
       } catch (err) {
@@ -144,7 +207,6 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
     const unsubscribeTts = assistantRef.current.on?.('tts', ({ state, owner }) => {
       if (owner) {
         console.log(`🔊 TTS ${state}`);
-        // Можно показать индикатор озвучки в UI
       }
     });
 
@@ -152,21 +214,12 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
     return () => {
       unsubscribe?.();
       unsubscribeTts?.();
-      // Останавливаем озвучку при размонтировании
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      // 🔥 Останавливаем озвучку через ассистента при размонтировании
+      assistantRef.current?.cancelTts?.();
       assistantRef.current = null;
+      isInitializedRef.current = false;
     };
   }, []); // Инициализация один раз при монтировании
-
-  /**
-   * Обработка начальных команд (отдельно от on('data'))
-   */
-  const handleInitialCommand = useCallback((action, ctx) => {
-    // Аналогично handleSmartAppAction, но без дублирования в UI
-    console.log('🔄 Initial command processed:', action);
-  }, []);
 
   /**
    * Обработка навигационных команд (стрелки пульта)
@@ -197,7 +250,7 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
   const updateState = useCallback((stateGetter) => {
     getStateCallback.current = stateGetter;
     // 🔥 Критически важно: уведомляем ассистента об изменении getState
-    assistantRef.current?.setGetState?.(() => stateGetter());
+    assistantRef.current?.setGetState?.(stateGetter);
   }, []);
 
   /**
@@ -234,7 +287,6 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
         },
         (error) => {
           console.error('❌ Action error:', error);
-          // Можно показать уведомление пользователю
         }
       );
     } catch (e) {
@@ -243,42 +295,40 @@ export const useAssistant = (onAction, context, recoveryStateGetter) => {
   }, []);
 
   /**
-   * Отправляет структурированный ответ от smartAppHandler
+   * 🔥 Отправляет ответ ассистенту — ВСЕ голосовые ответы идут через sendData
    */
-// В useAssistant.js - функция sendSmartAppResponse
+  const sendSmartAppResponse = useCallback((response) => {
+    if (!assistantRef.current?.sendData) return;
 
-const sendSmartAppResponse = useCallback((response) => {
-  if (!assistantRef.current?.sendData) return;
+    // 🔹 Если это голосовой ответ — отправляем команду pronounce_text
+    if (response?.type === 'voice_response' && response?.text) {
+      assistantRef.current.sendData({
+        action: {
+          action_id: 'pronounce_text',
+          parameters: {
+            text: response.text.trim(),
+            emotion: response.emotion,
+            context: response.context,
+            surface: process.env.REACT_APP_SURFACE,
+          },
+        },
+      });
+      console.log('🗣️ Sent to Assistant TTS:', response.text);
+      return;
+    }
 
-  // 🔹 Если это голосовой ответ — формируем команду pronounce_text
-  if (response?.type === 'voice_response' && response?.text) {
+    // 🔹 Обычный ответ с данными для UI
+    const formattedResponse = createSmartAppResponse(response);
     assistantRef.current.sendData({
       action: {
-        action_id: 'pronounce_text',
-        parameters: {
-          text: response.text,
-          // 🔹 Дополнительные параметры для TTS (если бэкенд поддерживает)
-          emotion: response.emotion,
-          context: response.context,
-          surface: process.env.REACT_APP_SURFACE,
-        },
+        action_id: 'response',
+        parameters: formattedResponse,
       },
     });
-    return;
-  }
-
-  // 🔹 Обычный ответ с данными для UI
-  const formattedResponse = createSmartAppResponse(response);
-  assistantRef.current.sendData({
-    action: {
-      action_id: 'response',
-      parameters: formattedResponse,
-    },
-  });
-}, []);
+  }, []);
 
   /**
-   * 🔥 Новая функция: отправка server-action с типизированным ответом
+   * 🔥 Отправка server-action с типизированным ответом
    */
   const sendServerAction = useCallback((actionId, parameters, onSuccess, onError) => {
     if (!assistantRef.current?.sendAction) {
@@ -300,12 +350,10 @@ const sendSmartAppResponse = useCallback((response) => {
   }, []);
 
   /**
-   * 🔥 Остановка озвучки (полезно при скрытии приложения)
+   * 🔥 Остановка озвучки — ТОЛЬКО через ассистента
    */
   const cancelTts = useCallback(() => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    // ❌ НЕ использовать window.speechSynthesis.cancel() для пользовательской озвучки!
     assistantRef.current?.cancelTts?.();
   }, []);
 
@@ -318,8 +366,8 @@ const sendSmartAppResponse = useCallback((response) => {
     updateRecoveryState,
     sendActionValue,
     sendSmartAppResponse,
-    sendServerAction, // 🔥 Новая функция
-    cancelTts,        // 🔥 Новая функция
+    sendServerAction,
+    cancelTts,
   };
 };
 
