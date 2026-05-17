@@ -1,47 +1,53 @@
-export const CLOTHING_CATEGORIES = {
-  TOP: 'верх',
-  BOTTOM: 'низ',
-  UNDERWEAR: 'нижнее',
-  SOCKS: 'носки',
-  WOOL: 'шерсть',
-  OTHER: 'другое',
-};
+// src/constants/clothingData.js
 
-export const CATEGORY_OPTIONS = [
-  { value: CLOTHING_CATEGORIES.TOP, label: '👕 Верх (Футболки/Рубашки)' },
-  { value: CLOTHING_CATEGORIES.BOTTOM, label: '👖 Низ (Брюки/Джинсы)' },
-  { value: CLOTHING_CATEGORIES.UNDERWEAR, label: '🩲 Нижнее бельё' },
-  { value: CLOTHING_CATEGORIES.SOCKS, label: '🧦 Носки' },
-  { value: CLOTHING_CATEGORIES.WOOL, label: '🧶 Шерсть (Свитера/Пальто)' },
-  { value: CLOTHING_CATEGORIES.OTHER, label: '📦 Другое' },
-];
-
-export const FOLDING_INSTRUCTIONS = {
-  [CLOTHING_CATEGORIES.TOP]: 'Сложите пополам вдоль, затем ещё раз пополам',
-  [CLOTHING_CATEGORIES.BOTTOM]: 'Сложите пополам по длине, затем втрое',
-  [CLOTHING_CATEGORIES.UNDERWEAR]: 'Аккуратно сложите пополам',
-  [CLOTHING_CATEGORIES.SOCKS]: 'Сложите вместе и заверните один в другой',
-  [CLOTHING_CATEGORIES.WOOL]: 'Сложите пополам, рукава к центру, не вешать!',
-  [CLOTHING_CATEGORIES.OTHER]: 'Аккуратно сложите и уберите в шкаф',
-};
-
-export const WASHING_INSTRUCTIONS = {
-  [CLOTHING_CATEGORIES.TOP]: '30°C, деликатный режим. Сушить в расправленном виде.',
-  [CLOTHING_CATEGORIES.BOTTOM]: 'Вывернуть наизнанку. 30-40°C.',
-  [CLOTHING_CATEGORIES.UNDERWEAR]: 'Ручная стирка или деликатный режим.',
-  [CLOTHING_CATEGORIES.SOCKS]: 'Стирать в мешочке при 40°C.',
-  [CLOTHING_CATEGORIES.WOOL]: 'Только ручная стирка. Сушить горизонтально!',
-  [CLOTHING_CATEGORIES.OTHER]: 'Стирать согласно ярлыку.',
-};
-
+// 🔹 Сообщения об успехе (озвучиваются ассистентом)
 export const SUCCESS_MESSAGES = [
-  'Отлично сложено!',
-  'Прекрасная работа!',
-  'Теперь в шкафу порядок!',
+  'Отлично! Вещь убрана.',
+  'Готово! Теперь ваш шкаф ещё аккуратнее.',
+  'Принято! Я запомнила, что вы сложили эту вещь.',
+  'Замечательно! Так держать.',
+  'Супер! Вещь на своём месте.',
 ];
 
+// 🔹 Игнорируемые слова для распознавания
 export const ASSISTANT_IGNORED_WORDS = [
-  'добавить', 'положить', 'складывай', 'новая', 'вещь', 'одежда',
-  'удалить', 'убрать', 'выполнил', 'готово', 'сделал', 'сложил',
-  'напомнить', 'постирать', 'уход',
+  'добавь', 'удали', 'убери', 'сложи', 'готово',
+  'вещь', 'одежду', 'шкаф', 'категория', 'напомни',
+  'покажи', 'список', 'мой', 'гардероб',
 ];
+
+// 🔹 Конфигурация голосовых ответов
+export const ASSISTANT_VOICE_CONFIG = {
+  // 🔸 В production всегда false — озвучка только через ассистента
+  enableDevTts: process.env.NODE_ENV === 'development',
+
+  // 🔸 Поддерживаемые эмоции ассистента (зависит от бэкенда)
+  supportedEmotions: ['friendly', 'helpful', 'positive', 'concerned', 'neutral'],
+
+  // 🔸 Язык озвучки
+  language: 'ru-RU',
+};
+// src/constants/clothingData.js
+
+// ... ваши существующие экспорты (SUCCESS_MESSAGES, ASSISTANT_IGNORED_WORDS, ASSISTANT_VOICE_CONFIG)
+
+/**
+ * Массив категорий одежды для валидации и логики
+ */
+export const CLOTHING_CATEGORIES = [
+  'верх',
+  'низ',
+  'платье',
+  'бельё',
+  'обувь',
+  'аксессуары',
+  'другое'
+];
+
+/**
+ * Варианты для UI-выпадающих списков (value + label)
+ */
+export const CATEGORY_OPTIONS = CLOTHING_CATEGORIES.map(cat => ({
+  value: cat,
+  label: cat.charAt(0).toUpperCase() + cat.slice(1)
+}));

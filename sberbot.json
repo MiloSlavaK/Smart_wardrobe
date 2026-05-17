@@ -3,7 +3,7 @@
   "description": "SmartApp поможет вам научиться складывать вещи красиво, как в магазине! Получайте инструкции по складыванию и советы по стирке.",
   "type": "web_app",
   "version": "1.0.0",
-  "entryPoint": "https://your-domain.com/index.html",
+  "entryPoint": "http://localhost:3000",
   "settings": {
     "voice": {
       "enabled": true

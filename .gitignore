@@ -1,1 +1,17 @@
-Nothing should be ignored based on the provided file changes. The only modified file is a source code file (`src/hooks/useAssistant.js`), which should not be added to .gitignore.
+# Зависимости
+node_modules/
+package-lock.json
+
+# Окружение
+.env
+.env.local
+.env.development.local
+
+# Сборка
+dist/
+build/
+
+# Логи и ОС
+*.log
+.DS_Store
+Thumbs.db
