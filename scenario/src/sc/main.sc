@@ -10,12 +10,14 @@ state: Main
         $reactions.answer("Добавила " + name + " в категорию " + category);
         $reactions.data({
             "type": "add_clothing",
-            "id": id,
-            "name": name,
-            "note": name,
-            "category": category,
-            "instruction": "Сложите аккуратно по швам",
-            "washing": "Следуйте инструкции на ярлычке"
+            "payload": {
+                "id": id,
+                "name": name,
+                "note": name,
+                "category": category,
+                "instruction": "Сложите аккуратно по швам",
+                "washing": "Следуйте инструкции на ярлычке"
+            }
         });
 
     # ✅ Отметка как убранная: "выполнил футболку", "я убрал первую вещь"
@@ -31,7 +33,7 @@ state: Main
         }
         if (item) {
             $reactions.answer("Отлично! " + item.name + " убрана.");
-            $reactions.data({ "type": "done_clothing", "id": item.id });
+            $reactions.data({ "type": "done_clothing", "payload": { "id": item.id } });
         } else {
             $reactions.answer("Не нашла такую вещь. Попробуйте назвать номер или точное название.");
         }
@@ -47,7 +49,7 @@ state: Main
         if (idx >= 0 && $vars.closet && idx < $vars.closet.length) {
             var removed = $vars.closet.splice(idx, 1)[0];
             $reactions.answer("Удалила: " + removed.name);
-            $reactions.data({ "type": "delete_clothing", "id": removed.id });
+            $reactions.data({ "type": "delete_clothing", "payload": { "id": removed.id } });
         } else {
             $reactions.answer("Не нашла, что удалить. Скажите номер или название.");
         }
@@ -60,7 +62,7 @@ state: Main
         var item = $vars.closet?.find(i => i.name?.toLowerCase() == name?.toLowerCase());
         if (item) {
             $reactions.answer("Напомню про " + item.name + ": " + date);
-            $reactions.data({ "type": "set_reminder", "id": item.id, "date": date });
+            $reactions.data({ "type": "set_reminder", "payload": { "id": item.id, "date": date } });
         } else {
             $reactions.answer("Не нашла \"" + name + "\". Сначала добавьте её в шкаф.");
         }
@@ -72,7 +74,7 @@ state: Main
         var item = $vars.closet?.find(i => i.name?.toLowerCase() == name?.toLowerCase());
         if (item) {
             $reactions.answer("Для \"" + item.name + "\": " + item.washing);
-            $reactions.data({ "type": "speak_washing", "id": item.id });
+            $reactions.data({ "type": "speak_washing", "payload": { "id": item.id } });
         } else {
             $reactions.answer("Не нашла \"" + name + "\" в вашем шкафу.");
         }
@@ -84,7 +86,7 @@ state: Main
         var item = $vars.closet?.find(i => i.name?.toLowerCase() == name?.toLowerCase());
         if (item) {
             $reactions.answer("\"" + item.name + "\": " + item.instruction);
-            $reactions.data({ "type": "speak_instruction", "id": item.id });
+            $reactions.data({ "type": "speak_instruction", "payload": { "id": item.id } });
         } else {
             $reactions.answer("Добавьте \"" + name + "\" в шкаф, и я расскажу, как её сложить!");
         }
@@ -116,7 +118,7 @@ state: Main
         if ($vars.closet) {
             $vars.closet = $vars.closet.filter(i => !i.completed);
             $reactions.answer("Выполненные вещи удалены.");
-            $reactions.data({ "type": "clear_completed" });
+            $reactions.data({ "type": "clear_completed", "payload": {} });
         }
 
     # Fallback для нераспознанных фраз
