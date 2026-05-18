@@ -2,27 +2,40 @@
 import { useCallback } from 'react';
 import { SUCCESS_MESSAGES } from '../constants/clothingData';
 
-// 🔥 Все голосовые ответы — ТОЛЬКО через sendSmartAppResponse (отправка на платформу Сбера)
+// 🔥 Все голосовые ответы — ТОЛЬКО через sendSmartAppResponse (платформа Сбера)
+// Браузерный speechSynthesis ЗАПРЕЩЁН для пользовательских ответов
 const sendToAssistantVoice = (text, sendSmartAppResponse, options = {}) => {
   if (!text?.trim() || !sendSmartAppResponse) return;
+
+  // 🔥 Отправляем команду на озвучивание через платформу
   sendSmartAppResponse({
     type: 'voice_response',
     text: text.trim(),
     emotion: options.emotion,
     context: options.context,
   });
+
+  // 🔹 Только лог для отладки (НЕ реальная озвучка!)
   console.log('🗣️ [Assistant TTS]:', text);
 };
 
 export const useSpeech = (sendSmartAppResponse) => {
   const handleSpeakInstruction = useCallback((item) => {
     if (!item?.name || !item?.instruction) return;
-    sendToAssistantVoice(`Как сложить ${item.name}: ${item.instruction}`, sendSmartAppResponse, { emotion: 'helpful', context: 'folding' });
+    sendToAssistantVoice(
+      `Как сложить ${item.name}: ${item.instruction}`,
+      sendSmartAppResponse,
+      { emotion: 'helpful', context: 'folding' }
+    );
   }, [sendSmartAppResponse]);
 
   const handleSpeakWashing = useCallback((item) => {
     if (!item?.name || !item?.washing) return;
-    sendToAssistantVoice(`Совет по стирке для ${item.name}: ${item.washing}`, sendSmartAppResponse, { emotion: 'helpful', context: 'washing' });
+    sendToAssistantVoice(
+      `Совет по стирке для ${item.name}: ${item.washing}`,
+      sendSmartAppResponse,
+      { emotion: 'helpful', context: 'washing' }
+    );
   }, [sendSmartAppResponse]);
 
   const handleSpeakSuccess = useCallback((message) => {
@@ -46,11 +59,19 @@ export const useSuccessMessage = (sendActionValue) => {
   const playSuccessMessage = useCallback((id, items) => {
     const item = items.find(i => i.id === id);
     if (!item || item.completed) return;
+
     const msg = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
+
+    // 🔥 Отправляем на озвучку через платформу, не через браузер!
     if (sendActionValue) {
-      sendActionValue('pronounce_text', { text: msg, context: 'success_feedback', item_id: id });
+      sendActionValue('pronounce_text', {
+        text: msg,
+        context: 'success_feedback',
+        item_id: id
+      });
     }
   }, [sendActionValue]);
+
   return { playSuccessMessage };
 };
 
