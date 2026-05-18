@@ -3,8 +3,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { TaskList } from './pages/TaskList';
 import { useClosetItems } from './hooks/useClosetItems';
 import { useAssistant, ASSISTANT_IGNORED_WORDS } from './hooks/useAssistant';
-import { useSpeech } from './hooks/useSpeech';
-import { useSuccessMessage } from './hooks/useSpeech';
+import { useSpeech, useSuccessMessage } from './hooks/useSpeech';
 import './App.css';
 
 // Демо-элемент для первого запуска
@@ -220,7 +219,7 @@ export const App = () => {
 
   // === ХУКИ ОЗВУЧКИ ===
   const { handleSpeakInstruction, handleSpeakWashing, speak } = useSpeech(sendSmartAppResponse);
-  const { playSuccessMessage } = useSuccessMessage(sendActionValue);
+  const { playSuccessMessage } = useSuccessMessage(sendSmartAppResponse);
 
   // === ОБРАБОТЧИКИ ДЛЯ UI ===
 

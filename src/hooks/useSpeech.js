@@ -55,7 +55,7 @@ export const useSpeech = (sendSmartAppResponse) => {
   return { handleSpeakInstruction, handleSpeakWashing, handleSpeakSuccess, handleSpeakError, speak };
 };
 
-export const useSuccessMessage = (sendActionValue) => {
+export const useSuccessMessage = (sendSmartAppResponse) => {
   const playSuccessMessage = useCallback((id, items) => {
     const item = items.find(i => i.id === id);
     if (!item || item.completed) return;
@@ -63,14 +63,15 @@ export const useSuccessMessage = (sendActionValue) => {
     const msg = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
 
     // 🔥 Отправляем на озвучку через платформу, не через браузер!
-    if (sendActionValue) {
-      sendActionValue('pronounce_text', {
+    if (sendSmartAppResponse) {
+      sendSmartAppResponse({
+        type: 'voice_response',
         text: msg,
-        context: 'success_feedback',
-        item_id: id
+        emotion: 'positive',
+        context: 'success_feedback'
       });
     }
-  }, [sendActionValue]);
+  }, [sendSmartAppResponse]);
 
   return { playSuccessMessage };
 };
