@@ -152,30 +152,23 @@ export const App = () => {
     }
   }, []);
 
-// 🔥 СТРОГО по документации: только разрешённые поля в item_selector.items
-const getStateForAssistant = useCallback(() => ({
-  item_selector: {
-    ignored_words: ASSISTANT_IGNORED_WORDS,
-    items: items.map(({ id, name }, index) => ({
-      number: index + 1,  // 🔥 Обязательно: для команд "первая", "вторая"
-      id,                 // 🔥 Обязательно: уникальная идентификация
-      title: name,        // 🔥 Обязательно: фраза для распознавания речи
-      // ❌ НЕ добавляйте: completed, category, instruction, washing — это ломает NLU!
-    })),
-  },
-  // 🔹 Доп. контекст — ОТДЕЛЬНЫМ полем, не в item_selector:
-  closet_meta: {
-    total: items.length,
-    completed: items.filter(i => i.completed).length,
-  },
-}), [items]);
-
-// 🔥 Обновляем getState ТОЛЬКО через useEffect с зависимостями
-useEffect(() => {
-  if (updateState && typeof updateState === 'function') {
-    updateState(getStateForAssistant);
-  }
-}, [items, updateState, getStateForAssistant]);
+  // 🔥 СТРОГО по документации: только разрешённые поля в item_selector.items
+  const getStateForAssistant = useCallback(() => ({
+    item_selector: {
+      ignored_words: ASSISTANT_IGNORED_WORDS,
+      items: items.map(({ id, name }, index) => ({
+        number: index + 1,  // 🔥 Обязательно: для команд "первая", "вторая"
+        id,                 // 🔥 Обязательно: уникальная идентификация
+        title: name,        // 🔥 Обязательно: фраза для распознавания речи
+        // ❌ НЕ добавляйте: completed, category, instruction, washing — это ломает NLU!
+      })),
+    },
+    // 🔹 Доп. контекст — ОТДЕЛЬНЫМ полем, не в item_selector:
+    closet_meta: {
+      total: items.length,
+      completed: items.filter(i => i.completed).length,
+    },
+  }), [items]);
 
   // === getRecoveryState ДЛЯ ВОССТАНОВЛЕНИЯ СЕССИИ ===
   const getRecoveryState = useCallback(() => {

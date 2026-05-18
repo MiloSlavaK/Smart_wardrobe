@@ -6,5 +6,5 @@ state: entry
     script:
         log('entryPoint: ' + JSON.stringify($context))
         
-    goto: MainState
+    goto: Main
 
