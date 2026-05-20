@@ -1,93 +1,18 @@
 {
-  "project": {
-    "id": "wardrobe-assistant",
-    "name": "Помощник по складыванию одежды",
-    "folder": "/jaicp"
+  "project" : {
+    "id" : "my_canvas_test-17154-AnE",
+    "name" : "my_canvas_test-17154-AnE",
+    "folder" : "/jaicp"
   },
-  "settings": {
-    "language": "ru",
-    "spellingCorrection": false,
-    "classificationAlgorithm": "sts",
-    "timezone": "Europe/Moscow",
-    "businessShared": false,
-    "business": false
+  "settings" : {
+    "language" : "ru",
+    "spellingCorrection" : false,
+    "classificationAlgorithm" : "sts",
+    "timezone" : "UTC",
+    "businessShared" : false,
+    "business" : false
   },
-  "intents": [
-    {
-      "name": "add_clothing",
-      "utterances": [
-        "добавить вещь",
-        "новая одежда",
-        "складывай {item_name}",
-        "добавь {item_name}",
-        "хочу сложить {item_name}",
-        "положить в гардероб {item_name}",
-        "запиши {item_name}"
-      ]
-    },
-    {
-      "name": "done_clothing",
-      "utterances": [
-        "готово",
-        "сложил",
-        "выполнил",
-        "вещь готова",
-        "закончил складывать"
-      ]
-    },
-    {
-      "name": "delete_clothing",
-      "utterances": [
-        "удалить вещь",
-        "убрать одежду",
-        "удали {item_name}",
-        "выбросить вещь"
-      ]
-    },
-    {
-      "name": "folding_instruction",
-      "utterances": [
-        "как сложить",
-        "инструкция по складыванию",
-        "расскажи как складывать",
-        "покажи как сложить",
-        "метод складывания"
-      ]
-    },
-    {
-      "name": "washing_tip",
-      "utterances": [
-        "как стирать",
-        "совет по стирке",
-        "режим стирки",
-        "как постирать",
-        "уход за вещью"
-      ]
-    },
-    {
-      "name": "greeting",
-      "utterances": [
-        "привет",
-        "здравствуй",
-        "добрый день",
-        "начать",
-        "старт"
-      ]
-    },
-    {
-      "name": "goodbye",
-      "utterances": [
-        "пока",
-        "до свидания",
-        "завершить",
-        "закончить"
-      ]
-    }
-  ],
-  "entities": [],
-  "enabledSystemEntities": [
-    "duckling.number",
-    "duckling.time",
-    "duckling.duration"
-  ]
+  "intents" : [ ],
+  "entities" : [ ],
+  "enabledSystemEntities" : [ "duckling.number", "duckling.time", "duckling.duration", "duckling.phone-number", "duckling.email", "duckling.url" ]
 }

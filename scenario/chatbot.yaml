@@ -1,13 +1,23 @@
-name: "Помощник по складыванию одежды"
-description: "SmartApp поможет научиться складывать вещи как в магазине"
-entryPoint: entryPoint.sc
+name: Wardrobe
+
+entryPoint:
+  - entryPoint.sc
+
 botEngine: v2
 language: ru
+
 sts:
   noMatchThreshold: 0.2
 caila:
   noMatchThreshold: 0.2
-  importFile: caila_import.json
+
 tests:
   include:
     - test.xml
+
+messages:
+    onError:
+        defaultMessage: Что-то пошло не так
+        locales:
+            ru: Что-то пошло не так
+            en: Failed on request processing

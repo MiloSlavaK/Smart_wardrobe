@@ -6,7 +6,7 @@ function get_request(context) {
 
 function get_server_action(request){
     if (request &&
-        request.payload && 
+        request.payload &&
         request.payload.data &&
         request.payload.data.server_action){
             return request.payload.data.server_action;

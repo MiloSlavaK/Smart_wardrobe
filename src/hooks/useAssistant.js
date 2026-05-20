@@ -109,23 +109,20 @@ export const useAssistant = (onAction, context, getRecoveryState) => {
           return;
         }
 
-        // 🔸 AssistantSmartAppCommand — КОМАНДЫ ОТ БЭКЕНДА
         if (event.type === 'smart_app_data') {
-          // 🔥 Согласно документации: данные в event.smart_app_data, а не event.action!
-          const smartAppData = event.smart_app_data;
+          // 🔥 ФОРМАТ ШАБЛОНА: action на корневом уровне
+          const action = event.action || event.smart_app_data;
 
-          if (!smartAppData?.type) {
-            console.warn('⚠️ smart_app_data without type:', smartAppData);
+          if (!action?.type) {
+            console.warn('⚠️ No action type:', event);
             return;
           }
 
-          console.log('📥 Backend command:', smartAppData);
+          console.log('📥 Parsed action:', action);
 
-          // 🔹 Обрабатываем через handler
-          handleSmartAppAction(smartAppData, contextRef.current);
-          // 🔹 Обновляем UI
-          onActionRef.current?.(smartAppData);
-
+          // Обрабатываем
+          handleSmartAppAction(action, contextRef.current);
+          onActionRef.current?.(action);
           return;
         }
 

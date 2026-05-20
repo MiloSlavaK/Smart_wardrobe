@@ -1,20 +1,13 @@
 function addNote(note, context) {
     addAction({
-        type: "add_note",
+        type: "add_item",
         note: note
     }, context);
 }
 
 function doneNote(id, context){
     addAction({
-        type: "done_note",
-        id: id
-    }, context);
-}
-
-function deleteNote(id, context){
-    addAction({
-        type: "delete_note",
+        type: "done_item",
         id: id
     }, context);
 }
