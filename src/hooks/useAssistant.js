@@ -15,6 +15,7 @@ const createMockAssistant = () => ({
   setGetRecoveryState: () => {},
   cancelTts: () => {},
   close: () => {},
+  applicationId: 'mock-application-id',
 });
 
 const initializeAssistant = (getState, getRecoveryState) => {
@@ -26,7 +27,7 @@ const initializeAssistant = (getState, getRecoveryState) => {
 
   if (isDev && token && smartapp) {
     try {
-      return createSmartappDebugger({
+      const debuggerAssistant = createSmartappDebugger({
         token,
         initPhrase: `Запусти ${smartapp}`,
         getState,
@@ -34,6 +35,11 @@ const initializeAssistant = (getState, getRecoveryState) => {
         nativePanel: { defaultText: 'Говорите...', screenshotMode: false, tabIndex: -1 },
         surface: process.env.REACT_APP_SURFACE || 'COMPANION',
       });
+      // 🔥 Добавляем applicationId для отладки
+      if (!debuggerAssistant.applicationId) {
+        debuggerAssistant.applicationId = 'debugger-application-id';
+      }
+      return debuggerAssistant;
     } catch (e) {
       console.error('❌ Debugger init failed:', e);
       return createMockAssistant();
