@@ -31,7 +31,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указано название вещи',
-          message: 'Пожалуйста, назовите вещь, которую хотите добавить'
+          message: 'Пожалуйста, назовите вещь, которую хотите добавить',
         };
       }
 
@@ -50,7 +50,7 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: true,
         message: `Добавлена вещь: ${name}. Категория: ${category}.`,
-        data: newItem
+        data: newItem,
       };
     }
 
@@ -61,7 +61,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указан ID вещи',
-          message: 'Пожалуйста, уточните, какую вещь вы сложили'
+          message: 'Пожалуйста, уточните, какую вещь вы сложили',
         };
       }
 
@@ -70,7 +70,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Вещь не найдена',
-          message: 'Вещь с таким идентификатором не найдена'
+          message: 'Вещь с таким идентификатором не найдена',
         };
       }
 
@@ -79,7 +79,7 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: true,
         message: `Отлично! Вещь "${item.name}" отмечена как сложенная.`,
-        data: { id: itemId, completed: true }
+        data: { id: itemId, completed: true },
       };
     }
 
@@ -90,7 +90,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указан ID вещи',
-          message: 'Пожалуйста, уточните, какую вещь удалить'
+          message: 'Пожалуйста, уточните, какую вещь удалить',
         };
       }
 
@@ -99,7 +99,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Вещь не найдена',
-          message: 'Вещь с таким идентификатором не найдена'
+          message: 'Вещь с таким идентификатором не найдена',
         };
       }
 
@@ -108,7 +108,7 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: true,
         message: `Вещь "${item.name}" удалена из гардероба.`,
-        data: { id: itemId, deleted: true }
+        data: { id: itemId, deleted: true },
       };
     }
 
@@ -120,7 +120,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указан ID вещи',
-          message: 'Пожалуйста, уточните, для какой вещи установить напоминание'
+          message: 'Пожалуйста, уточните, для какой вещи установить напоминание',
         };
       }
 
@@ -128,7 +128,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указана дата',
-          message: 'Пожалуйста, укажите дату напоминания'
+          message: 'Пожалуйста, укажите дату напоминания',
         };
       }
 
@@ -137,7 +137,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Вещь не найдена',
-          message: 'Вещь с таким идентификатором не найдена'
+          message: 'Вещь с таким идентификатором не найдена',
         };
       }
 
@@ -146,7 +146,7 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: true,
         message: `Напоминание для "${item.name}" установлено на ${date}.`,
-        data: { id: itemId, reminder: date }
+        data: { id: itemId, reminder: date },
       };
     }
 
@@ -157,7 +157,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указан ID вещи',
-          message: 'Пожалуйста, уточните, для какой вещи нужна инструкция'
+          message: 'Пожалуйста, уточните, для какой вещи нужна инструкция',
         };
       }
 
@@ -166,7 +166,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Вещь не найдена',
-          message: 'Вещь с таким идентификатором не найдена'
+          message: 'Вещь с таким идентификатором не найдена',
         };
       }
 
@@ -176,7 +176,7 @@ export const handleSmartAppAction = (action, context) => {
         success: true,
         message: instructionText,
         speak: instructionText,
-        data: { id: itemId, instruction: item.instruction }
+        data: { id: itemId, instruction: item.instruction },
       };
     }
 
@@ -187,7 +187,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Не указан ID вещи',
-          message: 'Пожалуйста, уточните, для какой вещи нужен совет по стирке'
+          message: 'Пожалуйста, уточните, для какой вещи нужен совет по стирке',
         };
       }
 
@@ -196,7 +196,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: false,
           error: 'Вещь не найдена',
-          message: 'Вещь с таким идентификатором не найдена'
+          message: 'Вещь с таким идентификатором не найдена',
         };
       }
 
@@ -206,17 +206,16 @@ export const handleSmartAppAction = (action, context) => {
         success: true,
         message: washingText,
         speak: washingText,
-        data: { id: itemId, washing: item.washing }
+        data: { id: itemId, washing: item.washing },
       };
     }
 
     case 'list_items': {
-      // Команда для получения списка всех вещей
       if (items.length === 0) {
         return {
           success: true,
           message: 'В вашем гардеробе пока нет вещей. Добавьте первую!',
-          data: { items: [] }
+          data: { items: [] },
         };
       }
 
@@ -225,19 +224,18 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: true,
         message: `В вашем гардеробе ${items.length} вещей: ${itemsList}`,
-        data: { items }
+        data: { items },
       };
     }
 
     case 'find_item': {
-      // Поиск вещи по названию
       const searchQuery = parameters?.query || parameters?.name;
 
       if (!searchQuery) {
         return {
           success: false,
           error: 'Не указан поисковый запрос',
-          message: 'Пожалуйста, назовите вещь, которую хотите найти'
+          message: 'Пожалуйста, назовите вещь, которую хотите найти',
         };
       }
 
@@ -249,7 +247,7 @@ export const handleSmartAppAction = (action, context) => {
         return {
           success: true,
           message: `Вещи с названием "${searchQuery}" не найдено`,
-          data: { items: [] }
+          data: { items: [] },
         };
       }
 
@@ -258,7 +256,7 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: true,
         message: `Найдено ${foundItems.length} вещей: ${itemsList}`,
-        data: { items: foundItems }
+        data: { items: foundItems },
       };
     }
 
@@ -267,7 +265,7 @@ export const handleSmartAppAction = (action, context) => {
       return {
         success: false,
         error: 'Неизвестное действие',
-        message: 'Команда не распознана. Попробуйте сказать иначе.'
+        message: 'Команда не распознана. Попробуйте сказать иначе.',
       };
   }
 };
@@ -309,20 +307,20 @@ export const parseCategory = (categoryName) => {
   const normalized = categoryName.toLowerCase().trim();
 
   const categoryMap = {
-    'верх': CLOTHING_CATEGORIES.TOP,
-    'футболка': CLOTHING_CATEGORIES.TOP,
-    'рубашка': CLOTHING_CATEGORIES.TOP,
-    'низ': CLOTHING_CATEGORIES.BOTTOM,
-    'брюки': CLOTHING_CATEGORIES.BOTTOM,
-    'джинсы': CLOTHING_CATEGORIES.BOTTOM,
-    'штаны': CLOTHING_CATEGORIES.BOTTOM,
-    'нижнее': CLOTHING_CATEGORIES.UNDERWEAR,
-    'бельё': CLOTHING_CATEGORIES.UNDERWEAR,
-    'носки': CLOTHING_CATEGORIES.SOCKS,
-    'шерсть': CLOTHING_CATEGORIES.WOOL,
-    'свитер': CLOTHING_CATEGORIES.WOOL,
-    'пальто': CLOTHING_CATEGORIES.WOOL,
-    'другое': CLOTHING_CATEGORIES.OTHER,
+    верх: CLOTHING_CATEGORIES.TOP,
+    футболка: CLOTHING_CATEGORIES.TOP,
+    рубашка: CLOTHING_CATEGORIES.TOP,
+    низ: CLOTHING_CATEGORIES.BOTTOM,
+    брюки: CLOTHING_CATEGORIES.BOTTOM,
+    джинсы: CLOTHING_CATEGORIES.BOTTOM,
+    штаны: CLOTHING_CATEGORIES.BOTTOM,
+    нижнее: CLOTHING_CATEGORIES.UNDERWEAR,
+    бельё: CLOTHING_CATEGORIES.UNDERWEAR,
+    носки: CLOTHING_CATEGORIES.SOCKS,
+    шерсть: CLOTHING_CATEGORIES.WOOL,
+    свитер: CLOTHING_CATEGORIES.WOOL,
+    пальто: CLOTHING_CATEGORIES.WOOL,
+    другое: CLOTHING_CATEGORIES.OTHER,
   };
 
   for (const [key, value] of Object.entries(categoryMap)) {
@@ -367,5 +365,5 @@ export default {
   handleSmartAppAction,
   createSmartAppResponse,
   parseCategory,
-  extractItemId
+  extractItemId,
 };
