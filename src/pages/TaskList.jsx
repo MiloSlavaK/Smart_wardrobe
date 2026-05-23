@@ -26,3 +26,5 @@ export const TaskList = (props) => {
     </main>
   );
 };
+
+export default TaskList;

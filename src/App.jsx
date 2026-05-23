@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import { TaskList } from './pages/TaskList';
+import TaskList from './pages/TaskList';
 import { ASSISTANT_IGNORED_WORDS, SUCCESS_MESSAGES, CLOTHING_CATEGORIES } from './constants/clothingData';
 import { handleSmartAppAction, createSmartAppResponse } from './utils/smartAppHandler';
 import { validateClosetItem, getDefaultInstruction, getDefaultWashing } from './utils/helpers';

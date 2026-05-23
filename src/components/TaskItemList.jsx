@@ -64,3 +64,5 @@ export const TaskItemList = ({ items, onDone, onDelete, onUpdateReminder, onCare
     </div>
   );
 };
+
+export default TaskItemList;

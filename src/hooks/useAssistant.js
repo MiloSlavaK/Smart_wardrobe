@@ -55,8 +55,14 @@ const initializeAssistant = (getState, getRecoveryState) => {
         surface: process.env.REACT_APP_SURFACE || 'COMPANION',
       });
       
+      // Гарантируем наличие applicationId до любых операций с TTS
       if (!debuggerAssistant.applicationId) {
-        debuggerAssistant.applicationId = 'debugger-application-id';
+        Object.defineProperty(debuggerAssistant, 'applicationId', {
+          value: 'debugger-application-id',
+          writable: true,
+          configurable: true,
+          enumerable: true,
+        });
       }
       
       return debuggerAssistant;

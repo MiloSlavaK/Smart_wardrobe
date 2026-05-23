@@ -95,3 +95,5 @@ export const AddTask = ({ onAdd }) => {
     </div>
   );
 };
+
+export default AddTask;
