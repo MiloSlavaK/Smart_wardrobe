@@ -1,0 +1,184 @@
+{
+  "name": "Помощник по складыванию одежды",
+  "description": "SmartApp поможет вам научиться складывать вещи красиво, как в магазине! Получайте инструкции по складыванию и советы по стирке.",
+  "type": "web_app",
+  "version": "1.0.0",
+  "entryPoint": "http://localhost:3000",
+  "settings": {
+    "voice": {
+      "enabled": true
+    },
+    "surface": {
+      "mobile": true,
+      "station": true,
+      "tv": false
+    }
+  },
+  "intents": [
+    {
+      "name": "add_clothing",
+      "utterances": [
+        "добавить вещь",
+        "новая одежда",
+        "положить в гардероб",
+        "складывай {item_name}",
+        "добавь {item_name}"
+      ],
+      "slots": [
+        {
+          "name": "item_name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "required": false,
+          "default": "другое"
+        }
+      ]
+    },
+    {
+      "name": "done_clothing",
+      "utterances": [
+        "готово",
+        "сложил",
+        "выполнил",
+        "вещь готова",
+        "отметить выполненным",
+        "выполнил {item_name}",
+        "сложил {item_name}"
+      ],
+      "slots": [
+        {
+          "name": "item_name",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "delete_clothing",
+      "utterances": [
+        "удалить вещь",
+        "убрать одежду",
+        "удали {item_name}",
+        "выбросить вещь",
+        "убери {item_name}"
+      ],
+      "slots": [
+        {
+          "name": "item_name",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "set_reminder",
+      "utterances": [
+        "напомнить об уходе",
+        "установить напоминание",
+        "постирать {item_name}",
+        "напомни про уход",
+        "напомни про {item_name}"
+      ],
+      "slots": [
+        {
+          "name": "item_name",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "speak_instruction",
+      "utterances": [
+        "как сложить",
+        "расскажи как складывать",
+        "инструкция по складыванию",
+        "озвучь инструкцию",
+        "как сложить {item_name}"
+      ],
+      "slots": [
+        {
+          "name": "item_name",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "speak_washing",
+      "utterances": [
+        "как стирать",
+        "совет по стирке",
+        "режим стирки",
+        "озвучь совет по стирке",
+        "как стирать {item_name}"
+      ],
+      "slots": [
+        {
+          "name": "item_name",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "commands": {
+    "add_clothing": {
+      "action_id": "add_clothing",
+      "parameters": {
+        "name": "${item_name}",
+        "category": "${category}"
+      }
+    },
+    "done_clothing": {
+      "action_id": "done_clothing",
+      "parameters": {
+        "name": "${item_name}"
+      }
+    },
+    "delete_clothing": {
+      "action_id": "delete_clothing",
+      "parameters": {
+        "name": "${item_name}"
+      }
+    },
+    "set_reminder": {
+      "action_id": "set_reminder",
+      "parameters": {
+        "name": "${item_name}",
+        "date": "${date}"
+      }
+    },
+    "speak_instruction": {
+      "action_id": "speak_instruction",
+      "parameters": {
+        "name": "${item_name}"
+      }
+    },
+    "speak_washing": {
+      "action_id": "speak_washing",
+      "parameters": {
+        "name": "${item_name}"
+      }
+    }
+  },
+  "greetings": [
+    "Привет! Я помогу вам навести порядок в шкафу. Скажите, какую вещь хотите сложить?",
+    "Здравствуйте! Давайте вместе приведём ваш гардероб в порядок!",
+    "Рад помочь! Какую одежду будем складывать сегодня?"
+  ],
+  "goodbyes": [
+    "Отличной вам организации пространства!",
+    "Теперь у вас всё будет лежать аккуратно!",
+    "Обращайтесь ещё за советами по уходу!"
+  ]
+}
